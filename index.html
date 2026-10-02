@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Strategic Battle Game</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #0b1020;
+    color: white;
+    min-height: 100vh;
+}
+
+header {
+    background: #151c35;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 2px solid #26345d;
+}
+
+header h1 {
+    color: #58a6ff;
+    font-size: 28px;
+}
+
+header p {
+    color: #aab4d4;
+    margin-top: 8px;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    min-height: calc(100vh - 100px);
+}
+
+.sidebar {
+    background: #11172b;
+    padding: 25px 15px;
+    border-right: 1px solid #293452;
+}
+
+.sidebar h2 {
+    color: #58a6ff;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.nav-btn {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 12px;
+    background: #1b2542;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.nav-btn:hover {
+    background: #263b70;
+}
+
+.main {
+    padding: 25px;
+}
+
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.card {
+    background: #151d35;
+    border: 1px solid #29375e;
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.card h3 {
+    color: #9aa8ca;
+    font-size: 14px;
+}
+
+.card .value {
+    font-size: 30px;
+    font-weight: bold;
+    margin-top: 10px;
+    color: #58a6ff;
+}
+
+.game-area {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 20px;
+}
+
+.battle {
+    background: #151d35;
+    border: 1px solid #29375e;
+    border-radius: 15px;
+    padding: 25px;
+}
+
+.battle h2 {
+    color: #58a6ff;
+    margin-bottom: 20px;
+}
+
+.players {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 25px 0;
+}
+
+.player {
+    text-align: center;
+}
+
+.avatar {
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    background: #263b70;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    margin: auto;
+}
+
+.health {
+    width: 150px;
+    height: 12px;
+    background: #30394f;
+    border-radius: 10px;
+    margin-top: 12px;
+    overflow: hidden;
+}
+
+.health-bar {
+    height: 100%;
+    background: #32d583;
+    width: 100%;
+}
+
+.vs {
+    font-size: 28px;
+    color: #ff5c7a;
+    font-weight: bold;
+}
+
+.actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.action-btn {
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    background: #2463eb;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.action-btn:hover {
+    background: #3b82f6;
+}
+
+.ai-panel {
+    background: #151d35;
+    border: 1px solid #29375e;
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.ai-panel h2 {
+    color: #a855f7;
+    margin-bottom: 15px;
+}
+
+.ai-status {
+    background: #202a48;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.ai-status span {
+    color: #32d583;
+    font-weight: bold;
+}
+
+.tree {
+    margin-top: 20px;
+}
+
+.node {
+    background: #202a48;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 8px;
+    border-left: 4px solid #a855f7;
+}
+
+.log {
+    margin-top: 20px;
+    background: #0d1326;
+    padding: 15px;
+    border-radius: 10px;
+    height: 150px;
+    overflow-y: auto;
+}
+
+.log p {
+    margin: 7px 0;
+    color: #b8c2dd;
+}
+
+.reset {
+    margin-top: 15px;
+    width: 100%;
+    padding: 12px;
+    background: #e63964;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+@media(max-width: 900px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        display: none;
+    }
+
+    .dashboard {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .game-area {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media(max-width: 600px) {
+    .dashboard {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .actions {
+        grid-template-columns: 1fr;
+    }
+
+    .players {
+        gap: 15px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>⚔️ AI-Powered Strategic Battle Game</h1>
+    <p>Using Decision Tree Search</p>
+</header>
+
+<div class="container">
+
+    <aside class="sidebar">
+        <h2>🎮 GAME MENU</h2>
+
+        <button class="nav-btn">🏠 Dashboard</button>
+        <button class="nav-btn">⚔️ Battle Arena</button>
+        <button class="nav-btn">🤖 AI Strategy</button>
+        <button class="nav-btn">🌳 Decision Tree</button>
+        <button class="nav-btn">📊 Game Statistics</button>
+    </aside>
+
+    <main class="main">
+
+        <section class="dashboard">
+
+            <div class="card">
+                <h3>PLAYER HEALTH</h3>
+                <div class="value" id="playerHealth">100</div>
+            </div>
+
+            <div class="card">
+                <h3>AI HEALTH</h3>
+                <div class="value" id="aiHealth">100</div>
+            </div>
+
+            <div class="card">
+                <h3>TURN</h3>
+                <div class="value" id="turn">1</div>
+            </div>
+
+            <div class="card">
+                <h3>AI DECISION</h3>
+                <div class="value" id="decision">---</div>
+            </div>
+
+        </section>
+
+        <section class="game-area">
+
+            <div class="battle">
+
+                <h2>⚔️ Battle Arena</h2>
+
+                <div class="players">
+
+                    <div class="player">
+                        <div class="avatar">🧑‍🚀</div>
+                        <h3>PLAYER</h3>
+
+                        <div class="health">
+                            <div class="health-bar" id="playerBar"></div>
+                        </div>
+
+                        <p id="playerText">100 HP</p>
+                    </div>
+
+                    <div class="vs">VS</div>
+
+                    <div class="player">
+                        <div class="avatar">🤖</div>
+                        <h3>AI</h3>
+
+                        <div class="health">
+                            <div class="health-bar" id="aiBar"></div>
+                        </div>
+
+                        <p id="aiText">100 HP</p>
+                    </div>
+
+                </div>
+
+                <h3 style="margin-bottom:15px;">Choose Your Action</h3>
+
+                <div class="actions">
+
+                    <button class="action-btn"
+                        onclick="playerMove('Attack')">
+                        ⚔️ Attack
+                    </button>
+
+                    <button class="action-btn"
+                        onclick="playerMove('Defend')">
+                        🛡️ Defend
+                    </button>
+
+                    <button class="action-btn"
+                        onclick="playerMove('Special')">
+                        🔥 Special
+                    </button>
+
+                </div>
+
+                <div class="log" id="gameLog">
+                    <p>🎮 Game started. Choose your action.</p>
+                </div>
+
+                <button class="reset" onclick="resetGame()">
+                    🔄 Restart Game
+                </button>
+
+            </div>
+
+            <div class="ai-panel">
+
+                <h2>🤖 AI Decision System</h2>
+
+                <div class="ai-status">
+                    AI Status:
+                    <span id="aiStatus">Thinking...</span>
+                </div>
+
+                <p>
+                    The AI evaluates possible moves using
+                    <b>Decision Tree Search</b>.
+                </p>
+
+                <div class="tree">
+
+                   
